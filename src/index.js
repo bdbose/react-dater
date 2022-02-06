@@ -1,6 +1,427 @@
-import React from 'react'
-import styles from './styles.module.css'
+import React, { useEffect, useMemo, useState } from 'react'
+import styled from 'styled-components'
+import './styles.module.css'
+import { ReactComponent as LeftArrow } from './assets/left.svg'
+import { ReactComponent as RightArrow } from './assets/right.svg'
 
-export const ExampleComponent = ({ text }) => {
-  return <div className={styles.test}>Example Component: {text}</div>
+export const DatePicker = ({
+  children,
+  dates,
+  setDates,
+  noMonth = 2,
+  open,
+  setOpen,
+  sticky = true,
+  infinite = true,
+  className = '',
+  style
+}) => {
+  const [noOfMonth, setNoOfMonth] = useState(noMonth)
+  const [nShow, setNShow] = useState([
+    {
+      m: dates.checkin ? dates.checkin.getMonth() : new Date().getMonth(),
+      y: dates.checkin ? dates.checkin.getFullYear() : new Date().getFullYear()
+    }
+  ])
+  useEffect(() => {
+    const arr = [...nShow]
+    while (true) {
+      if (arr.length === noOfMonth) {
+        break
+      }
+      if (arr[arr.length - 1].m === 11) {
+        arr.push({
+          m: 0,
+          y: arr[arr.length - 1].y + 1
+        })
+      } else {
+        arr.push({
+          m: arr[arr.length - 1].m + 1,
+          y: arr[arr.length - 1].y
+        })
+      }
+    }
+    setNShow(arr)
+  }, [noOfMonth])
+  const [mob, setMob] = useState(false)
+
+  useEffect(() => {
+    window.addEventListener('resize', () => {
+      if (window.innerWidth < 800) {
+        setMob(true)
+      } else {
+        setMob(false)
+        setNoOfMonth(2)
+      }
+    })
+    window.addEventListener('load', () => {
+      if (window.innerWidth < 800) {
+        setMob(true)
+      } else {
+        setMob(false)
+        setNoOfMonth(2)
+      }
+    })
+  }, [])
+  const nextMonths = () => {
+    const newArr = nShow.map((ele) => {
+      if (ele.m === 11) {
+        return {
+          m: 0,
+          y: ele.y + 1
+        }
+      }
+      return {
+        m: ele.m + 1,
+        y: ele.y
+      }
+    })
+    setNShow(newArr)
+  }
+  const prevMonths = () => {
+    const newArr = nShow.map((ele) => {
+      if (ele.m === 0) {
+        return {
+          m: 11,
+          y: ele.y - 1
+        }
+      }
+      return {
+        m: ele.m - 1,
+        y: ele.y
+      }
+    })
+    setNShow(newArr)
+  }
+  const LeftButton = styled.button`
+    position: absolute;
+    background: none;
+    border: 0;
+    left: 40px;
+    top: calc(1.5em + 20px);
+    cursor: pointer;
+  `
+  const RightButton = styled.button`
+    position: absolute;
+    background: none;
+    border: 0;
+    right: 40px;
+    top: calc(1.5em + 20px);
+    cursor: pointer;
+  `
+  useMemo(() => {
+    if (sticky) {
+      document.addEventListener('click', (evt) => {
+        const flyoutElement = document.getElementById('date-picker')
+        let targetElement = evt.target
+        do {
+          if (targetElement === flyoutElement) {
+            return
+          }
+          targetElement = targetElement.parentNode
+        } while (targetElement)
+        setOpen(false)
+      })
+    }
+  }, [])
+
+  const handleScroll = (e) => {
+    const bottom =
+      e.target.scrollHeight - e.target.scrollTop <= e.target.clientHeight + 100
+    if (bottom && mob) {
+      const arr = []
+      if (nShow[nShow.length - 1].m === 11) {
+        arr.push({
+          m: 0,
+          y: nShow[nShow.length - 1].y + 1
+        })
+      } else {
+        arr.push({
+          m: nShow[nShow.length - 1].m + 1,
+          y: nShow[nShow.length - 1].y
+        })
+      }
+
+      setNShow([...nShow, ...arr])
+    }
+  }
+  return (
+    <div className={'date-picker ' + className} id='date-picker'>
+      {children}
+      {open && (
+        <div
+          className='date-picker-wrapper'
+          onScroll={handleScroll}
+          style={{
+            display: 'flex',
+            gap: '20px',
+            width: mob ? '100%' : 'fit-content',
+            position: 'absolute',
+            flexDirection: mob ? 'column' : 'row',
+            background: '#FFFFFF',
+            border: !mob && '1px solid #F2F2F2',
+            boxSizing: 'border-box',
+            boxShadow: !mob && '0px 0px 50px 4px rgba(221, 221, 221, 0.35)',
+            borderRadius: '10px',
+            padding: mob ? '20px 0' : '20px 40px',
+            alignItems: mob && 'center',
+            overflowY: mob && 'auto',
+            maxHeight: mob && '400px',
+            ...style
+          }}
+        >
+          {!mob && (
+            <React.Fragment>
+              <LeftButton onClick={prevMonths}>
+                <LeftArrow />
+              </LeftButton>
+
+              <RightButton onClick={nextMonths}>
+                <RightArrow />
+              </RightButton>
+            </React.Fragment>
+          )}
+          {nShow
+            .slice(!mob ? nShow.length - 2 : 0, nShow.length)
+            .map((ele, indx) => {
+              return (
+                <Months
+                  setDates={setDates}
+                  month={ele.m}
+                  year={ele.y}
+                  dates={dates}
+                  key={`${ele.m}+${ele.y}`}
+                  mob={mob}
+                />
+              )
+            })}
+        </div>
+      )}
+    </div>
+  )
+}
+
+const Months = ({
+  dates,
+  setDates,
+  month = new Date().getMonth(),
+  year = new Date().getFullYear(),
+  mob
+}) => {
+  const [changeMonth, setChangeMonth] = useState({
+    month: month,
+    year: year
+  })
+  const [data, setData] = useState({})
+  useMemo(() => {
+    setData(getDaysInMonth(changeMonth.month, changeMonth.year))
+  }, [changeMonth])
+  useMemo(() => {
+    if (data.data) {
+      const arr = data.data.map((i) => {
+        if (i.time === dates.checkin || i.time === dates.checkout) {
+          return { ...i, color: '#3564E2' }
+        }
+        if (dates.checkin < i.time && dates.checkout > i.time) {
+          return { ...i, color: '#EDF2FF' }
+        }
+        return { ...i, color: '' }
+      })
+      setData({ month: data.month, data: arr })
+    }
+  }, [dates])
+  const MonthWrapper = styled.div`
+    width: fit-content;
+    h3 {
+      text-align: center;
+    }
+  `
+  const MonthTitle = styled.div`
+    display: flex;
+    width: 100%;
+    align-items: center;
+    font-family: Inter;
+    justify-content: center;
+  `
+  const MonthContainer = styled.div`
+    grid-template-columns: repeat(7, ${mob ? '40px' : '48px'});
+    display: grid;
+  `
+  const DayContainer = styled.div`
+    display: flex;
+    align-items: center;
+    font-family: Inter;
+    justify-content: center;
+    border-radius: 4px;
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 15px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    font-feature-settings: 'tnum' on, 'lnum' on;
+    color: #333333;
+    height: ${mob ? '40px' : '48px'};
+    cursor: pointer;
+    border: 1px solid white;
+    transition: 0.3s ease-in-out;
+    &:hover {
+      background: #f2f2f2;
+      border: 1px solid #f2f2f2;
+    }
+  `
+  const WeekDaysWrapper = styled.div`
+    grid-template-columns: repeat(7, ${mob ? '40px' : '48px'});
+    display: grid;
+    div {
+      text-align: center;
+      font-family: Inter;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 12px;
+      line-height: 150%;
+      color: #666666;
+    }
+  `
+  useEffect(() => {
+    if (data.data) {
+      const arr = data.data.map((i) => {
+        if (
+          i.time &&
+          (i.time.toDateString() === dates.checkin.toDateString() ||
+            i.time.toDateString() === dates.checkout.toDateString())
+        ) {
+          return { ...i, color: '#3564E2' }
+        }
+        if (i.time && (i.time === dates.checkin || i.time === dates.checkout)) {
+          return { ...i, color: '#3564E2' }
+        }
+        if (dates.checkin < i.time && dates.checkout > i.time) {
+          return { ...i, color: '#EDF2FF' }
+        }
+        return { ...i, color: '' }
+      })
+      setData({ month: data.month, data: arr })
+    }
+  }, [])
+  return (
+    <MonthWrapper>
+      <MonthTitle>
+        {data.data && (
+          <h3>
+            {data.month}
+            &nbsp;{year}
+            {/* {data.data[data.length - 1].time.getFullYear()} */}
+          </h3>
+        )}
+      </MonthTitle>
+      <WeekDaysWrapper>
+        <div>Sun</div>
+        <div>Mon</div>
+        <div>Tue</div>
+        <div>Wed</div>
+        <div>Thu</div>
+        <div>Fri</div>
+        <div>Sat</div>
+      </WeekDaysWrapper>
+      <MonthContainer>
+        {data.data &&
+          data.data.map((ele, indx) => {
+            return (
+              <DayContainer
+                style={{
+                  background: ele.color,
+                  color: ele.color
+                    ? ele.color === '#EDF2FF'
+                      ? 'black'
+                      : 'white'
+                    : !ele.active
+                    ? 'lightgray'
+                    : 'black'
+                }}
+                onClick={() => {
+                  if (ele.active) {
+                    if (dates.checkin < dates.checkout) {
+                      return setDates({
+                        checkin: '',
+                        checkout: ''
+                      })
+                    }
+                    if (
+                      dates.checkout === ele.time ||
+                      dates.checkin === ele.time
+                    ) {
+                      return setDates({
+                        checkin: '',
+                        checkout: ''
+                      })
+                    }
+                    if (dates.checkin === '') {
+                      setDates({
+                        ...dates,
+                        checkin: ele.time
+                      })
+                    } else if (dates.checkin !== '') {
+                      setDates({
+                        ...dates,
+                        checkout: ele.time
+                      })
+                    }
+                  }
+                }}
+                key={`${ele.date}-${ele.day}-${indx}`}
+              >
+                {ele.date}
+              </DayContainer>
+            )
+          })}
+      </MonthContainer>
+    </MonthWrapper>
+  )
+}
+
+const monthNames = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+]
+
+function getDaysInMonth(month, year) {
+  var date = new Date(year, month, 1)
+  var days = []
+  while (date.getMonth() === month) {
+    days.push(new Date(date))
+    date.setDate(date.getDate() + 1)
+  }
+  const arr = days.map((ele) => {
+    if (new Date() > ele) {
+      return {
+        active: false,
+        day: new Date(ele).getDay(),
+        date: new Date(ele).getDate(),
+        time: new Date(ele)
+      }
+    }
+    return {
+      active: true,
+      day: new Date(ele).getDay(),
+      date: new Date(ele).getDate(),
+      time: new Date(ele)
+    }
+  })
+  const fillerArr = [0, 1, 2, 3, 4, 5, 6]
+  const fillArr = [...fillerArr.slice(0, arr[0].time.getDay()), ...arr]
+
+  return { month: monthNames[month], data: fillArr }
 }
