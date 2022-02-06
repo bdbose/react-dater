@@ -1,7 +1,7 @@
 {
-  "name": "react-dater",
+  "name": "react-responsive-calendar-picker",
   "version": "1.0.0",
-  "description": "Made with create-react-library",
+  "description": "This is a react library for Date Picking inspired by Airbnb date picker.",
   "author": "bdbose",
   "license": "MIT",
   "repository": "bdbose/react-dater",
