@@ -292,8 +292,8 @@ const Months = ({
           i.time &&
           (i.time.toDateString() ===
             (dates.checkin && dates.checkin.toDateString()) ||
-            (i.time.toDateString() === dates.checkout &&
-              dates.checkout.toDateString()))
+            i.time.toDateString() ===
+              (dates.checkout && dates.checkout.toDateString()))
         ) {
           return { ...i, color: '#3564E2' }
         }
