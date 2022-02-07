@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState, useRef } from 'react'
 import styled from 'styled-components'
 import './styles.module.css'
 import { ReactComponent as LeftArrow } from './assets/left.svg'
@@ -23,6 +23,7 @@ export const DatePicker = ({
       y: dates.checkin ? dates.checkin.getFullYear() : new Date().getFullYear()
     }
   ])
+  const dateRef = useRef()
   useEffect(() => {
     const arr = [...nShow]
     while (true) {
@@ -112,7 +113,8 @@ export const DatePicker = ({
   useMemo(() => {
     if (sticky) {
       document.addEventListener('click', (evt) => {
-        const flyoutElement = document.getElementById('date-picker')
+        console.log('eve')
+        const flyoutElement = dateRef.current
         let targetElement = evt.target
         do {
           if (targetElement === flyoutElement) {
@@ -123,7 +125,7 @@ export const DatePicker = ({
         setOpen(false)
       })
     }
-  }, [])
+  }, [dateRef])
 
   const handleScroll = (e) => {
     const bottom =
@@ -146,7 +148,7 @@ export const DatePicker = ({
     }
   }
   return (
-    <div className={'date-picker ' + className} id='date-picker'>
+    <div className={'date-picker ' + className} ref={dateRef} id='date-picker'>
       {children}
       {open && (
         <div
@@ -285,6 +287,16 @@ const Months = ({
       color: #666666;
     }
   `
+  const H3 = styled.div`
+    display: block;
+    text-align: center;
+    font-size: 1.17em;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+  `
   useEffect(() => {
     if (data.data) {
       const arr = data.data.map((i) => {
@@ -312,11 +324,11 @@ const Months = ({
     <MonthWrapper>
       <MonthTitle>
         {data.data && (
-          <h3>
+          <H3>
             {data.month}
             &nbsp;{year}
             {/* {data.data[data.length - 1].time.getFullYear()} */}
-          </h3>
+          </H3>
         )}
       </MonthTitle>
       <WeekDaysWrapper>

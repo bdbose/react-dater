@@ -10,19 +10,21 @@ const App = () => {
   })
   const [open, setOpen] = useState(false)
   return (
-    <>
+    <div className='ieo'>
       <DatePicker
         dates={dates}
         setDates={setDates}
         open={open}
         setOpen={setOpen}
       >
-        <button onClick={() => setOpen(!open)}>
-          {dates.checkin && dates.checkin.toDateString()} |{' '}
-          {dates.checkout && dates.checkout.toDateString()}
-        </button>
+        <div>
+          <button onClick={() => setOpen(!open)}>
+            {dates.checkin && dates.checkin.toDateString()} |{' '}
+            {dates.checkout && dates.checkout.toDateString()}
+          </button>
+        </div>
       </DatePicker>
-    </>
+    </div>
   )
 }
 
