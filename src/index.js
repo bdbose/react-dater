@@ -25,6 +25,20 @@ export const DatePicker = ({
   ])
   const dateRef = useRef()
   useEffect(() => {
+    function handleClickOutside(event) {
+      if (dateRef.current && !dateRef.current.contains(event.target)) {
+        setOpen(false)
+      }
+    }
+
+    // Bind the event listener
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      // Unbind the event listener on clean up
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [dateRef])
+  useEffect(() => {
     const arr = [...nShow]
     while (true) {
       if (arr.length === noOfMonth) {
@@ -110,22 +124,6 @@ export const DatePicker = ({
     top: calc(1.5em + 20px);
     cursor: pointer;
   `
-  useMemo(() => {
-    if (sticky) {
-      document.addEventListener('click', (evt) => {
-        console.log('eve')
-        const flyoutElement = dateRef.current
-        let targetElement = evt.target
-        do {
-          if (targetElement === flyoutElement) {
-            return
-          }
-          targetElement = targetElement.parentNode
-        } while (targetElement)
-        setOpen(false)
-      })
-    }
-  }, [dateRef])
 
   const handleScroll = (e) => {
     const bottom =
@@ -148,7 +146,12 @@ export const DatePicker = ({
     }
   }
   return (
-    <div className={'date-picker ' + className} ref={dateRef} id='date-picker'>
+    <div
+      className={'date-picker ' + className}
+      ref={dateRef}
+      tabIndex={0}
+      id='date-picker'
+    >
       {children}
       {open && (
         <div
