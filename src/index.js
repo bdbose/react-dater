@@ -14,7 +14,8 @@ export const DatePicker = ({
   sticky = true,
   infinite = true,
   className = '',
-  style
+  style,
+  mobile = false
 }) => {
   const [noOfMonth, setNoOfMonth] = useState(noMonth)
   const [nShow, setNShow] = useState([
@@ -27,7 +28,7 @@ export const DatePicker = ({
   useEffect(() => {
     function handleClickOutside(event) {
       if (dateRef.current && !dateRef.current.contains(event.target)) {
-        setOpen(false)
+        if (sticky) setOpen(false)
       }
     }
 
@@ -58,26 +59,26 @@ export const DatePicker = ({
     }
     setNShow(arr)
   }, [noOfMonth])
-  const [mob, setMob] = useState(false)
+  const [mob, setMob] = useState(mobile)
 
-  useEffect(() => {
-    window.addEventListener('resize', () => {
-      if (window.innerWidth < 800) {
-        setMob(true)
-      } else {
-        setMob(false)
-        setNoOfMonth(2)
-      }
-    })
-    window.addEventListener('load', () => {
-      if (window.innerWidth < 800) {
-        setMob(true)
-      } else {
-        setMob(false)
-        setNoOfMonth(2)
-      }
-    })
-  }, [])
+  // useEffect(() => {
+  //   window.addEventListener('resize', () => {
+  //     if (window.innerWidth < breakpoint) {
+  //       setMob(true)
+  //     } else {
+  //       setMob(false)
+  //       setNoOfMonth(noMonth)
+  //     }
+  //   })
+  //   window.addEventListener('load', () => {
+  //     if (window.innerWidth < breakpoint) {
+  //       setMob(true)
+  //     } else {
+  //       setMob(false)
+  //       setNoOfMonth(noMonth)
+  //     }
+  //   })
+  // }, [])
   const nextMonths = () => {
     const newArr = nShow.map((ele) => {
       if (ele.m === 11) {
@@ -127,7 +128,7 @@ export const DatePicker = ({
 
   const handleScroll = (e) => {
     const bottom =
-      e.target.scrollHeight - e.target.scrollTop <= e.target.clientHeight + 100
+      e.target.scrollHeight - e.target.scrollTop <= e.target.clientHeight + 10
     if (bottom && mob) {
       const arr = []
       if (nShow[nShow.length - 1].m === 11) {
@@ -141,10 +142,28 @@ export const DatePicker = ({
           y: nShow[nShow.length - 1].y
         })
       }
-
-      setNShow([...nShow, ...arr])
+      e.target.scrollTop = 10
+      setNShow([nShow[nShow.length - 1], ...arr])
+    }
+    const top = e.target.scrollTop
+    if (top === 0) {
+      const arr = []
+      if (nShow[0].m === 0) {
+        arr.push({
+          m: 11,
+          y: nShow[0].y - 1
+        })
+      } else {
+        arr.push({
+          m: nShow[0].m - 1,
+          y: nShow[0].y
+        })
+      }
+      // console.log([...arr, nShow[0]])
+      setNShow([...arr, nShow[0]])
     }
   }
+
   return (
     <div
       className={'date-picker ' + className}
@@ -222,6 +241,12 @@ const Months = ({
     setData(getDaysInMonth(changeMonth.month, changeMonth.year))
   }, [changeMonth])
   useMemo(() => {
+    if (new Date(dates.checkin) > new Date(dates.checkout)) {
+      return setDates({
+        checkin: dates.checkout,
+        checkout: dates.checkin
+      })
+    }
     if (data.data) {
       const arr = data.data.map((i) => {
         if (i.time === dates.checkin || i.time === dates.checkout) {

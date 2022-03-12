@@ -8,9 +8,11 @@
 
 ```bash
 
-npm install --save react-dater
+npm install --save react-responsive-calendar-picker
 
 ```
+
+<img  src='https://i.ibb.co/QDKRjxM/image.png'  height='300'  width='100%'  />
 
 ## Usage
 
@@ -20,9 +22,9 @@ import  React, { Component } from  'react'
 
 
 
-import { DatePicker } from  'react-dater'
+import { DatePicker } from  'react-responsive-calendar-picker'
 
-import  'react-dater/dist/index.css'
+import  'react-responsive-calendar-picker/dist/index.css'
 
 
 
@@ -46,12 +48,10 @@ return (
 <DatePicker
 
 dates={dates}
-
 setDates={setDates}
-
 open={open}
-
 setOpen={setOpen}
+mob={window.innerWidth>800:false:true}
 
 >
 
@@ -72,8 +72,6 @@ setOpen={setOpen}
 }
 
 ```
-
-<img  src='https://i.ibb.co/QDKRjxM/image.png'  height='300'  width='100%'  />
 
 ## License
 

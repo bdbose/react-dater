@@ -11,13 +11,14 @@ const App = () => {
   const [open, setOpen] = useState(false)
   return (
     <>
-      <div>Hello</div>
       <div className='ieo'>
         <DatePicker
           dates={dates}
           setDates={setDates}
-          open={open}
+          open={true}
           setOpen={setOpen}
+          mobile={window.innerWidth < 800 ? true : false}
+          sticky={false}
         >
           <div className='sda'>
             <button onClick={() => setOpen(!open)}>
