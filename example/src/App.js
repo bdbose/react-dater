@@ -8,14 +8,14 @@ const App = () => {
     checkin: new Date('2022-03-28'),
     checkout: new Date('2022-04-28')
   })
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(true)
   return (
     <>
       <div className='ieo'>
         <DatePicker
           dates={dates}
           setDates={setDates}
-          open={true}
+          open={open}
           setOpen={setOpen}
           mobile={window.innerWidth < 800 ? true : false}
           sticky={false}

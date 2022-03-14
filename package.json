@@ -1,6 +1,6 @@
 {
   "name": "react-responsive-calendar-picker",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "This is a react library for Date Picking inspired by Airbnb date picker.",
   "author": "bdbose",
   "license": "MIT",
