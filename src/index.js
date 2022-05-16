@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import './styles.module.css'
 import { ReactComponent as LeftArrow } from './assets/left.svg'
 import { ReactComponent as RightArrow } from './assets/right.svg'
+import { format } from 'multi-date'
 
 export const DatePicker = ({
   children,
@@ -15,7 +16,8 @@ export const DatePicker = ({
   infinite = true,
   className = '',
   style,
-  mobile = false
+  mobile = false,
+  blocked = []
 }) => {
   const [noOfMonth, setNoOfMonth] = useState(noMonth)
   const [nShow, setNShow] = useState([
@@ -216,6 +218,7 @@ export const DatePicker = ({
                   dates={dates}
                   key={`${ele.m}+${ele.y}`}
                   mob={mob}
+                  blocked={blocked}
                 />
               )
             })}
@@ -230,7 +233,8 @@ const Months = ({
   setDates,
   month = new Date().getMonth(),
   year = new Date().getFullYear(),
-  mob
+  mob,
+  blocked
 }) => {
   const [changeMonth, setChangeMonth] = useState({
     month: month,
@@ -238,7 +242,7 @@ const Months = ({
   })
   const [data, setData] = useState({})
   useMemo(() => {
-    setData(getDaysInMonth(changeMonth.month, changeMonth.year))
+    setData(getDaysInMonth(changeMonth.month, changeMonth.year, blocked))
   }, [changeMonth])
   useMemo(() => {
     if (new Date(dates.checkin) > new Date(dates.checkout)) {
@@ -247,8 +251,12 @@ const Months = ({
         checkout: dates.checkin
       })
     }
+    var flag = 0
     if (data.data) {
       const arr = data.data.map((i) => {
+        if (i.blocked && dates.checkin < i.time && dates.checkout > i.time) {
+          flag = 1
+        }
         if (i.time === dates.checkin || i.time === dates.checkout) {
           return { ...i, color: '#3564E2' }
         }
@@ -257,6 +265,12 @@ const Months = ({
         }
         return { ...i, color: '' }
       })
+      if (flag) {
+        return setDates({
+          ...dates,
+          checkout: ''
+        })
+      }
       setData({ month: data.month, data: arr })
     }
   }, [dates])
@@ -327,7 +341,11 @@ const Months = ({
   `
   useEffect(() => {
     if (data.data) {
+      let flag = 0
       const arr = data.data.map((i) => {
+        if (i.blocked && i.time && dates.checkout) {
+          flag = 1
+        }
         if (
           i.time &&
           (i.time.toDateString() ===
@@ -345,6 +363,13 @@ const Months = ({
         }
         return { ...i, color: '' }
       })
+      console.log(flag)
+      if (flag) {
+        return setDates({
+          ...dates,
+          checkout: ''
+        })
+      }
       setData({ month: data.month, data: arr })
     }
   }, [])
@@ -381,7 +406,8 @@ const Months = ({
                       : 'white'
                     : !ele.active
                     ? 'lightgray'
-                    : 'black'
+                    : 'black',
+                  textDecoration: ele.blocked && 'line-through'
                 }}
                 onClick={() => {
                   if (ele.active) {
@@ -439,7 +465,8 @@ const monthNames = [
   'December'
 ]
 
-function getDaysInMonth(month, year) {
+function getDaysInMonth(month, year, blocked) {
+  console.log(blocked)
   var date = new Date(year, month, 1)
   var days = []
   while (date.getMonth() === month) {
@@ -447,6 +474,15 @@ function getDaysInMonth(month, year) {
     date.setDate(date.getDate() + 1)
   }
   const arr = days.map((ele) => {
+    if (blocked.includes(format(ele, 'YYYY-MM-DD'))) {
+      return {
+        active: false,
+        blocked: true,
+        day: new Date(ele).getDay(),
+        date: new Date(ele).getDate(),
+        time: new Date(ele)
+      }
+    }
     if (new Date() > ele) {
       return {
         active: false,

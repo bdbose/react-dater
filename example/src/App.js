@@ -5,8 +5,8 @@ import 'react-dater/dist/index.css'
 
 const App = () => {
   const [dates, setDates] = useState({
-    checkin: new Date('2022-03-28'),
-    checkout: new Date('2022-04-28')
+    checkin: '',
+    checkout: ''
   })
   const [open, setOpen] = useState(true)
   return (
@@ -19,6 +19,7 @@ const App = () => {
           setOpen={setOpen}
           mobile={window.innerWidth < 800 ? true : false}
           sticky={false}
+          blocked={['2022-06-01', '2022-06-10']}
         >
           <div className='sda'>
             <button onClick={() => setOpen(!open)}>

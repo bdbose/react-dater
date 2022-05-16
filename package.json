@@ -51,6 +51,7 @@
     "dist"
   ],
   "dependencies": {
+    "multi-date": "^1.0.1",
     "styled-components": "^5.3.3"
   }
 }
