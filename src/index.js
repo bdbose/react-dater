@@ -248,7 +248,7 @@ const Months = ({
     if (new Date(dates.checkin) > new Date(dates.checkout)) {
       return setDates({
         checkin: dates.checkout,
-        checkout: dates.checkin
+        checkout: ''
       })
     }
     var flag = 0
@@ -257,7 +257,13 @@ const Months = ({
         if (i.blocked && dates.checkin < i.time && dates.checkout > i.time) {
           flag = 1
         }
-        if (i.time === dates.checkin || i.time === dates.checkout) {
+        if (
+          i.time &&
+          (i.time.toDateString() ===
+            (dates.checkin && dates.checkin.toDateString()) ||
+            i.time.toDateString() ===
+              (dates.checkout && dates.checkout.toDateString()))
+        ) {
           return { ...i, color: '#3564E2' }
         }
         if (dates.checkin < i.time && dates.checkout > i.time) {

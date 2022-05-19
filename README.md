@@ -1,4 +1,4 @@
-# react-dater
+# react-responsive-calendar-picker
 
 > Made with create-react-library
 

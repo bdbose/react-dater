@@ -3,6 +3,8 @@ import React, { useState } from 'react'
 import { DatePicker } from 'react-dater'
 import 'react-dater/dist/index.css'
 
+import blocked from './data.json'
+
 const App = () => {
   const [dates, setDates] = useState({
     checkin: '',
@@ -19,7 +21,7 @@ const App = () => {
           setOpen={setOpen}
           mobile={window.innerWidth < 800 ? true : false}
           sticky={false}
-          blocked={['2022-06-01', '2022-06-10']}
+          blocked={blocked}
         >
           <div className='sda'>
             <button onClick={() => setOpen(!open)}>
