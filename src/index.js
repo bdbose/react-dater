@@ -243,7 +243,7 @@ const Months = ({
   const [data, setData] = useState({})
   useMemo(() => {
     setData(getDaysInMonth(changeMonth.month, changeMonth.year, blocked))
-  }, [changeMonth])
+  }, [changeMonth, blocked])
   useMemo(() => {
     if (new Date(dates.checkin) > new Date(dates.checkout)) {
       return setDates({
@@ -369,7 +369,7 @@ const Months = ({
         }
         return { ...i, color: '' }
       })
-      console.log(flag)
+      // console.log(flag)
       if (flag) {
         return setDates({
           ...dates,
@@ -472,7 +472,6 @@ const monthNames = [
 ]
 
 function getDaysInMonth(month, year, blocked) {
-  console.log(blocked)
   var date = new Date(year, month, 1)
   var days = []
   while (date.getMonth() === month) {
