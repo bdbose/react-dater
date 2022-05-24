@@ -296,6 +296,10 @@ const Months = ({
   const MonthContainer = styled.div`
     grid-template-columns: repeat(7, ${mob ? '40px' : '48px'});
     display: grid;
+    .active-date {
+      background: #3564e2;
+      color: white !important;
+    }
   `
   const DayContainer = styled.div`
     display: flex;
@@ -370,12 +374,12 @@ const Months = ({
         return { ...i, color: '' }
       })
       // console.log(flag)
-      if (flag) {
-        return setDates({
-          ...dates,
-          checkout: ''
-        })
-      }
+      // if (flag) {
+      //   return setDates({
+      //     ...dates,
+      //     checkout: ''
+      //   })
+      // }
       setData({ month: data.month, data: arr })
     }
   }, [])
@@ -404,6 +408,14 @@ const Months = ({
           data.data.map((ele, indx) => {
             return (
               <DayContainer
+                className={
+                  ele.time &&
+                  (ele.time.toDateString() ===
+                    (dates.checkin && dates.checkin.toDateString()) ||
+                    ele.time.toDateString() ===
+                      (dates.checkout && dates.checkout.toDateString())) &&
+                  'active-date'
+                }
                 style={{
                   background: ele.color,
                   color: ele.color
