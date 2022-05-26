@@ -296,9 +296,17 @@ const Months = ({
   const MonthContainer = styled.div`
     grid-template-columns: repeat(7, ${mob ? '40px' : '48px'});
     display: grid;
+    .inbtw-dates {
+      background: #edf2ff;
+      color: black !important;
+    }
     .active-date {
       background: #3564e2;
       color: white !important;
+      &:hover {
+        background: #3564e2;
+        color: white !important;
+      }
     }
   `
   const DayContainer = styled.div`
@@ -408,14 +416,7 @@ const Months = ({
           data.data.map((ele, indx) => {
             return (
               <DayContainer
-                className={
-                  ele.time &&
-                  (ele.time.toDateString() ===
-                    (dates.checkin && dates.checkin.toDateString()) ||
-                    ele.time.toDateString() ===
-                      (dates.checkout && dates.checkout.toDateString())) &&
-                  'active-date'
-                }
+                className={getClass(ele, dates)}
                 style={{
                   background: ele.color,
                   color: ele.color
@@ -466,6 +467,25 @@ const Months = ({
       </MonthContainer>
     </MonthWrapper>
   )
+}
+
+const getClass = (i, dates) => {
+  if (
+    i.time &&
+    (i.time.toDateString() ===
+      (dates.checkin && dates.checkin.toDateString()) ||
+      i.time.toDateString() ===
+        (dates.checkout && dates.checkout.toDateString()))
+  ) {
+    return 'active-date'
+  }
+  if (i.time && (i.time === dates.checkin || i.time === dates.checkout)) {
+    return 'active-date'
+  }
+  if (dates.checkin < i.time && dates.checkout > i.time) {
+    return 'inbtw-dates'
+  }
+  return ''
 }
 
 const monthNames = [
