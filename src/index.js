@@ -115,16 +115,18 @@ export const DatePicker = ({
     position: absolute;
     background: none;
     border: 0;
-    left: 40px;
-    top: calc(1.5em + 20px);
+    left: 30px;
+    padding: 10px;
+    top: calc(1.5em + 10px);
     cursor: pointer;
   `
   const RightButton = styled.button`
     position: absolute;
     background: none;
     border: 0;
-    right: 40px;
-    top: calc(1.5em + 20px);
+    right: 30px;
+    padding: 10px;
+    top: calc(1.5em + 10px);
     cursor: pointer;
   `
 
