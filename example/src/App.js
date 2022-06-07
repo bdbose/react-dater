@@ -58,17 +58,17 @@ const App = () => {
     }
   }
 
-  useEffect(() => {
-    getBlocked()
-  }, [])
+  // useEffect(() => {
+  //   getBlocked()
+  // }, [])
 
-  useEffect(() => {
-    if (!dates.checkin) {
-      getBlocked()
-    } else {
-      calculateBlockedDates()
-    }
-  }, [dates.checkin])
+  // useEffect(() => {
+  //   if (!dates.checkin) {
+  //     getBlocked()
+  //   } else {
+  //     calculateBlockedDates()
+  //   }
+  // }, [dates.checkin])
 
   const [toggle, setToggle] = useState(true)
   return (
@@ -95,6 +95,7 @@ const App = () => {
           mobile={window.innerWidth < 800 ? true : false}
           sticky={false}
           blocked={blocked}
+          sameDay={0}
         >
           <div className='sda'>
             <button onClick={() => setOpen(!open)}>
