@@ -9,8 +9,8 @@ import { customDates, format } from 'multi-date'
 
 const App = () => {
   const [dates, setDates] = useState({
-    checkin: '',
-    checkout: ''
+    checkin: new Date('2022-07-23'),
+    checkout: new Date('2022-07-22')
   })
   const [open, setOpen] = useState(true)
   const [blocked, setBlocked] = useState([])
