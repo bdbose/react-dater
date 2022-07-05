@@ -23,8 +23,14 @@ export const DatePicker = ({
   const [noOfMonth, setNoOfMonth] = useState(noMonth)
   const [nShow, setNShow] = useState([
     {
-      m: dates.checkin ? dates.checkin.getMonth() : new Date().getMonth(),
-      y: dates.checkin ? dates.checkin.getFullYear() : new Date().getFullYear()
+      m:
+        dates.checkin && !isNaN(new Date(dates.checkin))
+          ? dates.checkin.getMonth()
+          : new Date().getMonth(),
+      y:
+        dates.checkin && !isNaN(new Date(dates.checkin))
+          ? dates.checkin.getFullYear()
+          : new Date().getFullYear()
     }
   ])
   const dateRef = useRef()
@@ -267,9 +273,13 @@ const Months = ({
         if (
           i.time &&
           (i.time.toDateString() ===
-            (dates.checkin && dates.checkin.toDateString()) ||
+            (dates.checkin &&
+              !isNaN(new Date(dates.checkin)) &&
+              dates.checkin.toDateString()) ||
             i.time.toDateString() ===
-              (dates.checkout && dates.checkout.toDateString()))
+              (dates.checkout &&
+                !isNaN(new Date(dates.checkout)) &&
+                dates.checkout.toDateString()))
         ) {
           return { ...i, color: '#3564E2' }
         }
@@ -374,9 +384,13 @@ const Months = ({
         if (
           i.time &&
           (i.time.toDateString() ===
-            (dates.checkin && dates.checkin.toDateString()) ||
+            (dates.checkin &&
+              !isNaN(new Date(dates.checkin)) &&
+              dates.checkin.toDateString()) ||
             i.time.toDateString() ===
-              (dates.checkout && dates.checkout.toDateString()))
+              (dates.checkout &&
+                isNaN(new Date(dates.checkout)) &&
+                dates.checkout.toDateString()))
         ) {
           return { ...i, color: '#3564E2' }
         }
@@ -480,9 +494,13 @@ const getClass = (i, dates) => {
   if (
     i.time &&
     (i.time.toDateString() ===
-      (dates.checkin && dates.checkin.toDateString()) ||
+      (dates.checkin &&
+        !isNaN(new Date(dates.checkin)) &&
+        dates.checkin.toDateString()) ||
       i.time.toDateString() ===
-        (dates.checkout && dates.checkout.toDateString()))
+        (dates.checkout &&
+          !isNaN(new Date(dates.checkout)) &&
+          dates.checkout.toDateString()))
   ) {
     return 'active-date'
   }

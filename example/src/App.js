@@ -9,38 +9,13 @@ import { customDates, format } from 'multi-date'
 
 const App = () => {
   const [dates, setDates] = useState({
-    checkin: new Date('2022-07-23'),
-    checkout: new Date('2022-07-22')
+    checkin: '',
+    checkout: ''
   })
   const [open, setOpen] = useState(true)
   const [blocked, setBlocked] = useState([])
   const getBlocked = async () => {
-    const data = await fetch(
-      'https://www.saffronstays.com/calender_node.php?listingList=4n25AV4ZEBzoXgqj&checkIn=2022-05-23&checkOut=2023-05-23',
-      {
-        headers: {},
-        body: null,
-        method: 'GET'
-      }
-    )
-    const dataJson = await data.json()
-    let blockedDates = []
-    let rooms = 3
-    const res = dataJson['4n25AV4ZEBzoXgqj']
-    Object.keys(res).forEach((ele) => {
-      if (res[ele].available === '' || res[ele].available === '0') {
-        blockedDates.push(ele)
-      } else if (
-        res[ele].status === 'unavailable' ||
-        res[ele].status === 'booked' ||
-        res[ele].status === 'blocked'
-      ) {
-        blockedDates.push(ele)
-      } else if (parseInt(res[ele].available) < rooms) {
-        blockedDates.push(ele)
-      }
-    })
-    setBlocked(blockedDates)
+    setBlocked(blockedJson)
   }
   const calculateBlockedDates = () => {
     const tempArr = blocked
@@ -58,17 +33,17 @@ const App = () => {
     }
   }
 
-  // useEffect(() => {
-  //   getBlocked()
-  // }, [])
+  useEffect(() => {
+    getBlocked()
+  }, [])
 
-  // useEffect(() => {
-  //   if (!dates.checkin) {
-  //     getBlocked()
-  //   } else {
-  //     calculateBlockedDates()
-  //   }
-  // }, [dates.checkin])
+  useEffect(() => {
+    if (!dates.checkin) {
+      getBlocked()
+    } else {
+      calculateBlockedDates()
+    }
+  }, [dates.checkin])
 
   const [toggle, setToggle] = useState(true)
   return (
@@ -97,12 +72,12 @@ const App = () => {
           blocked={blocked}
           sameDay={0}
         >
-          <div className='sda'>
+          {/* <div className='sda'>
             <button onClick={() => setOpen(!open)}>
               {dates.checkin && dates.checkin.toDateString()} |{' '}
               {dates.checkout && dates.checkout.toDateString()}
             </button>
-          </div>
+          </div> */}
         </DatePicker>
       </div>
     </>
