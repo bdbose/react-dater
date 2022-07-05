@@ -5,10 +5,6 @@ import { ReactComponent as LeftArrow } from './assets/left.svg'
 import { ReactComponent as RightArrow } from './assets/right.svg'
 import { format } from 'multi-date'
 
-function isValidDate(d) {
-  return d instanceof Date && !isNaN(d)
-}
-
 export const DatePicker = ({
   children,
   dates,
@@ -24,19 +20,11 @@ export const DatePicker = ({
   blocked = [],
   sameDay = 0
 }) => {
-  console.log(isValidDate(dates.checkin))
   const [noOfMonth, setNoOfMonth] = useState(noMonth)
-
   const [nShow, setNShow] = useState([
     {
-      m:
-        dates?.checkin && isValidDate(dates.checkin)
-          ? dates.checkin.getMonth()
-          : new Date().getMonth(),
-      y:
-        dates?.checkin && isValidDate(dates.checkin)
-          ? dates.checkin.getFullYear()
-          : new Date().getFullYear()
+      m: dates.checkin ? dates.checkin.getMonth() : new Date().getMonth(),
+      y: dates.checkin ? dates.checkin.getFullYear() : new Date().getFullYear()
     }
   ])
   const dateRef = useRef()
@@ -230,16 +218,7 @@ export const DatePicker = ({
                   setDates={setDates}
                   month={ele.m}
                   year={ele.y}
-                  dates={{
-                    checkin:
-                      dates.checkin && isValidDate(dates.checkin)
-                        ? dates.checkin
-                        : '',
-                    checkout:
-                      dates.checkout && isValidDate(dates.checkout)
-                        ? dates.checkout
-                        : ''
-                  }}
+                  dates={dates}
                   key={`${ele.m}+${ele.y}`}
                   mob={mob}
                   blocked={blocked}
