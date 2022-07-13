@@ -18,7 +18,8 @@ export const DatePicker = ({
   style,
   mobile = false,
   blocked = [],
-  sameDay = 0
+  sameDay = 0,
+  spl = false
 }) => {
   const [noOfMonth, setNoOfMonth] = useState(noMonth)
   const [nShow, setNShow] = useState([
@@ -229,6 +230,7 @@ export const DatePicker = ({
                   mob={mob}
                   blocked={blocked}
                   sameDay={sameDay}
+                  sql={sql}
                 />
               )
             })}
@@ -245,7 +247,8 @@ const Months = ({
   year = new Date().getFullYear(),
   mob,
   blocked,
-  sameDay
+  sameDay,
+  spl
 }) => {
   const [changeMonth, setChangeMonth] = useState({
     month: month,
@@ -288,7 +291,7 @@ const Months = ({
         }
         return { ...i, color: '' }
       })
-      if (flag) {
+      if (flag && !spl) {
         return setDates({
           ...dates,
           checkout: ''
