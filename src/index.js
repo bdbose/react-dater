@@ -19,7 +19,8 @@ export const DatePicker = ({
   mobile = false,
   blocked = [],
   sameDay = 0,
-  spl = false
+  spl = false,
+  detail = []
 }) => {
   const [noOfMonth, setNoOfMonth] = useState(noMonth)
   const [nShow, setNShow] = useState([
@@ -230,7 +231,8 @@ export const DatePicker = ({
                   mob={mob}
                   blocked={blocked}
                   sameDay={sameDay}
-                  sql={sql}
+                  spl={spl}
+                  detail={detail}
                 />
               )
             })}
@@ -248,7 +250,8 @@ const Months = ({
   mob,
   blocked,
   sameDay,
-  spl
+  spl,
+  detail
 }) => {
   const [changeMonth, setChangeMonth] = useState({
     month: month,
@@ -316,13 +319,23 @@ const Months = ({
   const MonthContainer = styled.div`
     grid-template-columns: repeat(7, ${mob ? '40px' : '48px'});
     display: grid;
+    .min-alert {
+      :before {
+        content: 'Min 2 Nights';
+        position: absolute;
+        top: -5px;
+        font-size: 7.5px;
+        background: black;
+      }
+    }
     .inbtw-dates {
       background: #edf2ff;
       color: black !important;
     }
     .active-date {
-      background: #3564e2;
+      background: #3564e2 !important;
       color: white !important;
+      text-decoration: none !important;
       &:hover {
         background: #3564e2;
         color: white !important;
@@ -330,16 +343,12 @@ const Months = ({
     }
   `
   const DayContainer = styled.div`
+    position: relative;
     display: flex;
     align-items: center;
     font-family: Inter;
     justify-content: center;
     border-radius: 4px;
-    font-family: Inter;
-    font-style: normal;
-    font-weight: 600;
-    font-size: 12px;
-    line-height: 15px;
     display: flex;
     align-items: center;
     text-align: center;
@@ -349,6 +358,20 @@ const Months = ({
     cursor: pointer;
     border: 1px solid white;
     transition: 0.3s ease-in-out;
+    flex-direction: column;
+    .day-date {
+      font-family: Inter;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 12px;
+      line-height: 15px;
+    }
+    .day-price {
+      font-family: Inter;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 8px;
+    }
     &:hover {
       background: #f2f2f2;
       border: 1px solid #f2f2f2;
@@ -440,7 +463,14 @@ const Months = ({
           data.data.map((ele, indx) => {
             return (
               <DayContainer
-                className={getClass(ele, dates)}
+                className={`${getClass(ele, dates)}  ${
+                  spl &&
+                  format(dates.checkin, 'YYYY-MM-DD') ===
+                    format(ele.time, 'YYYY-MM-DD')
+                    ? ' min-alert'
+                    : ''
+                }
+                `}
                 style={{
                   background: ele.color,
                   color: ele.color
@@ -484,13 +514,31 @@ const Months = ({
                 }}
                 key={`${ele.date}-${ele.day}-${indx}`}
               >
-                {ele.date}
+                <div className='day-date'>{ele.date}</div>
+                {ele.active &&
+                  !ele.blocked &&
+                  detail[format(ele.time, 'YYYY-MM-DD')]?.price && (
+                    <div className='day-price'>
+                      ₹{' '}
+                      {currenyShortner(
+                        detail[format(ele.time, 'YYYY-MM-DD')].price
+                      )}
+                    </div>
+                  )}
               </DayContainer>
             )
           })}
       </MonthContainer>
     </MonthWrapper>
   )
+}
+
+const currenyShortner = (m) => {
+  if (m.length >= 4) {
+    return `${(parseInt(m) / 1000).toFixed(1)}k`
+  } else {
+    return m
+  }
 }
 
 const getClass = (i, dates) => {
