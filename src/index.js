@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { useEffect, useMemo, useState, useRef } from 'react'
 import styled from 'styled-components'
 import './styles.module.css'
@@ -258,11 +259,20 @@ const Months = ({
     year: year
   })
   const [data, setData] = useState({})
+  const [monthAvg, setMonthAvg] = useState(0)
+
   useMemo(() => {
     setData(
       getDaysInMonth(changeMonth.month, changeMonth.year, blocked, sameDay)
     )
   }, [changeMonth, blocked])
+
+  useEffect(() => {
+    if (Object.keys(data).length > 0) {
+      setMonthAvg(getAvgPrice(data, detail))
+    }
+  }, [data])
+
   useMemo(() => {
     if (new Date(dates.checkin) > new Date(dates.checkout)) {
       return setDates({
@@ -327,6 +337,9 @@ const Months = ({
         font-size: 7.5px;
         background: black;
       }
+    }
+    .cheap-dates {
+      color: #00c700 !important;
     }
     .inbtw-dates {
       background: #edf2ff;
@@ -463,7 +476,7 @@ const Months = ({
           data.data.map((ele, indx) => {
             return (
               <DayContainer
-                className={`${getClass(ele, dates)}  ${
+                className={`${getClass(ele, dates, monthAvg, detail)}  ${
                   spl &&
                   format(dates.checkin, 'YYYY-MM-DD') ===
                     format(ele.time, 'YYYY-MM-DD')
@@ -541,7 +554,7 @@ const currenyShortner = (m) => {
   }
 }
 
-const getClass = (i, dates) => {
+const getClass = (i, dates, monthAvg, details) => {
   if (
     i.time &&
     (i.time.toDateString() ===
@@ -561,7 +574,14 @@ const getClass = (i, dates) => {
   if (dates.checkin < i.time && dates.checkout > i.time) {
     return 'inbtw-dates'
   }
-  return ''
+  if (
+    i.active &&
+    !i.blocked &&
+    format(i.time, 'YYYY-MM-DD') &&
+    details[format(i.time, 'YYYY-MM-DD')]?.price &&
+    details[format(i.time, 'YYYY-MM-DD')].price < (monthAvg * 80) / 100
+  )
+    return 'cheap-dates'
 }
 
 const monthNames = [
@@ -626,4 +646,19 @@ function getDaysInMonth(month, year, blocked, sameDay) {
   const fillArr = [...fillerArr.slice(0, arr[0].time.getDay()), ...arr]
 
   return { month: monthNames[month], data: fillArr }
+}
+
+const getAvgPrice = (data, details) => {
+  let sum = 0
+  data.data.forEach((ele) => {
+    if (
+      ele.active &&
+      !ele.blocked &&
+      format(ele.time, 'YYYY-MM-DD') &&
+      details[format(ele.time, 'YYYY-MM-DD')]?.price
+    ) {
+      sum = sum + parseInt(details[format(ele.time, 'YYYY-MM-DD')].price)
+    }
+  })
+  return sum / 30
 }

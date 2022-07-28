@@ -20,7 +20,7 @@ const App = () => {
   const getCalendarData = async () => {
     const checkout = customDates(format(new Date(), 'YYYY-MM-DD'), 1, 'year')
     let data = await axios(
-      `https://ecapi2.saffronstays.com/fetch-calendar/6tUAe6Z6C5KFnXR0?checkIn=${format(
+      `https://ecapi2.saffronstays.com//fetch-calendar/6tUAe6Z6C5KFnXR0?checkIn=${format(
         new Date(),
         'YYYY-MM-DD'
       )}&checkOut=${format(checkout, 'YYYY-MM-DD')}`
