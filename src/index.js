@@ -338,9 +338,6 @@ const Months = ({
         background: black;
       }
     }
-    .cheap-dates {
-      color: #00c700 !important;
-    }
     .inbtw-dates {
       background: #edf2ff;
       color: black !important;
@@ -476,7 +473,7 @@ const Months = ({
           data.data.map((ele, indx) => {
             return (
               <DayContainer
-                className={`${getClass(ele, dates, monthAvg, detail)}  ${
+                className={`${getClass(ele, dates)}  ${
                   spl &&
                   format(dates.checkin, 'YYYY-MM-DD') ===
                     format(ele.time, 'YYYY-MM-DD')
@@ -531,7 +528,14 @@ const Months = ({
                 {ele.active &&
                   !ele.blocked &&
                   detail[format(ele.time, 'YYYY-MM-DD')]?.price && (
-                    <div className='day-price'>
+                    <div
+                      className='day-price'
+                      style={{
+                        color:
+                          detail[format(ele.time, 'YYYY-MM-DD')].price <
+                            (monthAvg * 80) / 100 && '#00c700'
+                      }}
+                    >
                       ₹{' '}
                       {currenyShortner(
                         detail[format(ele.time, 'YYYY-MM-DD')].price
@@ -554,7 +558,7 @@ const currenyShortner = (m) => {
   }
 }
 
-const getClass = (i, dates, monthAvg, details) => {
+const getClass = (i, dates) => {
   if (
     i.time &&
     (i.time.toDateString() ===
@@ -574,14 +578,7 @@ const getClass = (i, dates, monthAvg, details) => {
   if (dates.checkin < i.time && dates.checkout > i.time) {
     return 'inbtw-dates'
   }
-  if (
-    i.active &&
-    !i.blocked &&
-    format(i.time, 'YYYY-MM-DD') &&
-    details[format(i.time, 'YYYY-MM-DD')]?.price &&
-    details[format(i.time, 'YYYY-MM-DD')].price < (monthAvg * 80) / 100
-  )
-    return 'cheap-dates'
+  return ''
 }
 
 const monthNames = [
