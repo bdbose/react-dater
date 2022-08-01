@@ -36,6 +36,21 @@ export const DatePicker = ({
           : new Date().getFullYear()
     }
   ])
+
+  useEffect(() => {
+    if (
+      format(dates.checkin, 'YYYY-MM-DD') ===
+      format(dates.checkout, 'YYYY-MM-DD')
+    ) {
+      setDates({
+        // @ts-ignore
+        checkin: '',
+        // @ts-ignore
+        checkout: ''
+      })
+    }
+  }, [dates.checkout])
+
   const dateRef = useRef()
   useEffect(() => {
     function handleClickOutside(event) {

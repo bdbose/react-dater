@@ -160,20 +160,20 @@ const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dates])
 
-  useEffect(() => {
-    if (
-      format(dates.checkin, 'YYYY-MM-DD') ===
-      format(dates.checkout, 'YYYY-MM-DD')
-    ) {
-      setDates({
-        // @ts-ignore
-        checkin: '',
-        // @ts-ignore
-        checkout: ''
-      })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dates.checkout])
+  // useEffect(() => {
+  //   if (
+  //     format(dates.checkin, 'YYYY-MM-DD') ===
+  //     format(dates.checkout, 'YYYY-MM-DD')
+  //   ) {
+  //     setDates({
+  //       // @ts-ignore
+  //       checkin: '',
+  //       // @ts-ignore
+  //       checkout: ''
+  //     })
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [dates.checkout])
 
   return (
     <>
@@ -197,6 +197,10 @@ const App = () => {
               {dates.checkout && dates.checkout.toDateString()}
             </button>
           </div> */}
+          <>
+            {dates.checkin && dates.checkin.toDateString()} |{' '}
+            {dates.checkout && dates.checkout.toDateString()}
+          </>
         </DatePicker>
       </div>
     </>
