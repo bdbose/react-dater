@@ -21,7 +21,8 @@ export const DatePicker = ({
   blocked = [],
   sameDay = 0,
   spl = false,
-  detail = []
+  detail = [],
+  normal = false
 }) => {
   const [noOfMonth, setNoOfMonth] = useState(noMonth)
   const [nShow, setNShow] = useState([
@@ -249,6 +250,7 @@ export const DatePicker = ({
                   sameDay={sameDay}
                   spl={spl}
                   detail={detail}
+                  normal={normal}
                 />
               )
             })}
@@ -267,7 +269,8 @@ const Months = ({
   blocked,
   sameDay,
   spl,
-  detail
+  detail,
+  normal
 }) => {
   const [changeMonth, setChangeMonth] = useState({
     month: month,
@@ -278,7 +281,13 @@ const Months = ({
 
   useMemo(() => {
     setData(
-      getDaysInMonth(changeMonth.month, changeMonth.year, blocked, sameDay)
+      getDaysInMonth(
+        changeMonth.month,
+        changeMonth.year,
+        blocked,
+        sameDay,
+        normal
+      )
     )
   }, [changeMonth, blocked])
 
@@ -611,7 +620,7 @@ const monthNames = [
   'December'
 ]
 
-function getDaysInMonth(month, year, blocked, sameDay) {
+function getDaysInMonth(month, year, blocked, sameDay, normal) {
   var date = new Date(year, month, 1)
   var days = []
   while (date.getMonth() === month) {
@@ -640,6 +649,14 @@ function getDaysInMonth(month, year, blocked, sameDay) {
       }
     }
     if (new Date() > ele) {
+      if (normal) {
+        return {
+          active: true,
+          day: new Date(ele).getDay(),
+          date: new Date(ele).getDate(),
+          time: new Date(ele)
+        }
+      }
       return {
         active: false,
         day: new Date(ele).getDay(),

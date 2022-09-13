@@ -188,6 +188,7 @@ const App = () => {
           sticky={false}
           blocked={blocked}
           sameDay={0}
+          // normal={true}
           spl={spl}
           detail={storeDates}
         >
