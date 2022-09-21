@@ -367,11 +367,11 @@ const Months = ({
       color: black !important;
     }
     .active-date {
-      background: #3564e2 !important;
+      background: #2d66a1 !important;
       color: white !important;
       text-decoration: none !important;
       &:hover {
-        background: #3564e2;
+        background: #2d66a1;
         color: white !important;
       }
     }
