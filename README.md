@@ -51,7 +51,7 @@ dates={dates}
 setDates={setDates}
 open={open}
 setOpen={setOpen}
-mobile={window.innerWidth>800:false:true}
+mobile={window.innerWidth>800?false:true}
 
 >
 
