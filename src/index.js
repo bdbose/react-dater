@@ -175,23 +175,23 @@ export const DatePicker = ({
       // e.target.scrollTop = 10
       setNShow([...nShow, ...arr])
     }
-    // const top = e.target.scrollTop
-    // if (top === 0) {
-    //   const arr = []
-    //   if (nShow[0].m === 0) {
-    //     arr.push({
-    //       m: 11,
-    //       y: nShow[0].y - 1
-    //     })
-    //   } else {
-    //     arr.push({
-    //       m: nShow[0].m - 1,
-    //       y: nShow[0].y
-    //     })
-    //   }
-    //   // console.log([...arr, nShow[0]])
-    //   setNShow([...arr, nShow[0]])
-    // }
+    const top = e.target.scrollTop
+    if (top === 0) {
+      const arr = []
+      if (nShow[0].m === 0) {
+        arr.push({
+          m: 11,
+          y: nShow[0].y - 1
+        })
+      } else {
+        arr.push({
+          m: nShow[0].m - 1,
+          y: nShow[0].y
+        })
+      }
+      // console.log([...arr, nShow[0]])
+      setNShow([...arr, nShow[0]])
+    }
   }
 
   return (
