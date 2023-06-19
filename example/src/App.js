@@ -174,7 +174,31 @@ const App = () => {
   //   }
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, [dates.checkout])
+  function getLastMonthDates() {
+    var currentDate = new Date()
+    var currentYear = currentDate.getFullYear()
+    var currentMonth = currentDate.getMonth() + 1 // January is month 0
+    var previousMonth = currentMonth - 1
+    var startDate = new Date(currentYear, previousMonth, 6)
 
+    var dates = []
+    var currentDate = startDate
+
+    while (currentDate <= new Date()) {
+      var formattedDate = currentDate.toISOString().slice(0, 10)
+
+      currentDate.setDate(currentDate.getDate() + 1)
+      dates.push(formattedDate)
+    }
+
+    return dates
+  }
+  const [openDates, setOpenDates] = useState([])
+  useEffect(() => {
+    setOpenDates(getLastMonthDates())
+  }, [])
+
+  console.log(openDates)
   return (
     <>
       <span>{blocked.length}</span>
@@ -186,11 +210,11 @@ const App = () => {
           setOpen={setOpen}
           mobile={window.innerWidth < 800 ? true : false}
           sticky={false}
-          blocked={blocked}
           sameDay={0}
           // normal={true}
           spl={spl}
           detail={storeDates}
+          openDates={new Date().getDate() > 5 ? openDates : []}
         >
           {/* <div className='sda'>
             <button onClick={() => setOpen(!open)}>

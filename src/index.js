@@ -22,7 +22,8 @@ export const DatePicker = ({
   sameDay = 0,
   spl = false,
   detail = [],
-  normal = false
+  normal = false,
+  openDates = []
 }) => {
   const [noOfMonth, setNoOfMonth] = useState(noMonth)
   const [nShow, setNShow] = useState([
@@ -251,6 +252,7 @@ export const DatePicker = ({
                   spl={spl}
                   detail={detail}
                   normal={normal}
+                  openDates={openDates}
                 />
               )
             })}
@@ -270,7 +272,8 @@ const Months = ({
   sameDay,
   spl,
   detail,
-  normal
+  normal,
+  openDates
 }) => {
   const [changeMonth, setChangeMonth] = useState({
     month: month,
@@ -286,10 +289,11 @@ const Months = ({
         changeMonth.year,
         blocked,
         sameDay,
-        normal
+        normal,
+        openDates
       )
     )
-  }, [changeMonth, blocked])
+  }, [changeMonth, blocked, openDates])
 
   useEffect(() => {
     if (Object.keys(data).length > 0) {
@@ -620,7 +624,7 @@ const monthNames = [
   'December'
 ]
 
-function getDaysInMonth(month, year, blocked, sameDay, normal) {
+function getDaysInMonth(month, year, blocked, sameDay, normal, openDates) {
   var date = new Date(year, month, 1)
   var days = []
   while (date.getMonth() === month) {
@@ -628,6 +632,15 @@ function getDaysInMonth(month, year, blocked, sameDay, normal) {
     date.setDate(date.getDate() + 1)
   }
   const arr = days.map((ele) => {
+    if (openDates.includes(format(ele, 'YYYY-MM-DD'))) {
+      return {
+        active: true,
+        blocked: false,
+        day: new Date(ele).getDay(),
+        date: new Date(ele).getDate(),
+        time: new Date(ele)
+      }
+    }
     if (blocked.includes(format(ele, 'YYYY-MM-DD'))) {
       return {
         active: false,
